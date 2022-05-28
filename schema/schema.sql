@@ -1,8 +1,14 @@
 CREATE TABLE IF NOT EXISTS accounts (
   id CHAR(32) PRIMARY KEY,
   username VARCHAR(64) NOT NULL,
-  password VARCHAR(1) NOT NULL,
+  password VARCHAR(128) NOT NULL,
   is_admin BOOLEAN NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS form_verification (
+  id CHAR(32) PRIMARY KEY,
+  code VARCHAR(32) NOT NULL,
+  is_used BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS people (
