@@ -1,4 +1,5 @@
 # Family Tree Tracker
 
 # ERD
-![image](https://user-images.githubusercontent.com/19152005/170820049-6401f6fd-b261-452e-a950-d77f55686186.png)
+![image](https://user-images.githubusercontent.com/19152005/170825219-5c939af9-3e3f-4f84-ad45-6e73d554c094.png)
+
