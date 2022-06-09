@@ -20,7 +20,7 @@ func Routes(api fiber.Router) {
 	repo := accountRepo.NewPostgresRepository(db)
 	srv := accountService.NewService(repo)
 
-	api.Post("/account", func(c *fiber.Ctx) error {
+	api.Get("/account", func(c *fiber.Ctx) error {
 		return accountClient.CreateAccount(c, srv)
 	})
 }

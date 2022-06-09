@@ -1,8 +1,8 @@
 package models
 
 type Event struct {
-	ID          int64         `json:"id"`
-	PeopleID    int64         `json:"people_id"`
+	ID          string        `json:"id"`
+	PeopleID    string        `json:"people_id"`
 	Category    EventCategory `json:"category"`
 	Description string        `json:"description"`
 	Date        string        `json:"date"`

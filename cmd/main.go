@@ -3,19 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/kelseyhightower/envconfig"
+	"github.com/joho/godotenv"
 	"github.com/ridwankustanto/family-tree-tracker/server"
 )
 
-type Config struct {
-	DatabaseURL string `envconfig:"DATABASE_URL"`
-}
-
 func main() {
-	var cfg Config
-	err := envconfig.Process("", &cfg)
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		panic("Error loading .env file")
 	}
 
 	log.Println("Listening on port 8080...")

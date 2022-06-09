@@ -1,8 +1,8 @@
 package models
 
 type Account struct {
-	ID        int64  `json:"id"`
-	PeopleID  int64  `json:"people_id"`
+	ID        string `json:"id"`
+	PeopleID  string `json:"people_id"`
 	IsAdmin   bool   `json:"is_admin"`
 	Username  string `json:"username"`
 	Password  string `json:"-"`

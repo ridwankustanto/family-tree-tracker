@@ -10,7 +10,8 @@ import (
 )
 
 func InitDB() (*sql.DB, error) {
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	// postgres://shopvee:123456@product_db/shopvee?sslmode=disable
+	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
