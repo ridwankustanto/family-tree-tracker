@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   updated_at DATE NOT NULL,
   is_admin BOOLEAN NOT NULL,
   CONSTRAINT FK_AccountPeople FOREIGN KEY (people_id)
-  REFERENCES people(id),
+  REFERENCES people(id)
 );
 
 CREATE TABLE IF NOT EXISTS people_has_relations (
@@ -69,8 +69,7 @@ CREATE TABLE IF NOT EXISTS people_has_events (
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL,
   CONSTRAINT FK_EventPeople FOREIGN KEY (people_id)
-  REFERENCES people(id),
-  
+  REFERENCES people(id)
 );
 
 CREATE TABLE IF NOT EXISTS log_activities (
