@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/ridwankustanto/family-tree-tracker/server/routes/account"
+	"github.com/ridwankustanto/family-tree-tracker/routes/account"
 )
 
 func Routes(app *fiber.App) {

@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/ridwankustanto/family-tree-tracker/server/routes"
+	"github.com/ridwankustanto/family-tree-tracker/routes"
 )
 
 func Run() {
