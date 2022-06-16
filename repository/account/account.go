@@ -30,6 +30,7 @@ func (r *postgresRepository) Ping() error {
 }
 
 func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account) error {
-	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, username) VALUES($1, $2)", a.ID, a.Username)
+	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, username, password, people_id, is_admin, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7)",
+		a.ID, a.Username, a.Password, a.PeopleID, a.IsAdmin, a.CreatedAt, a.UpdatedAt)
 	return err
 }
