@@ -15,3 +15,5 @@
 # vendor/
 
 /cmd/.env
+doc/.$family-tree-tracker.drawio.bkp
+doc/.$family-tree-tracker.drawio.dtmp

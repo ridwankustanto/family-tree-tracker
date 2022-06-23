@@ -3,7 +3,7 @@ package models
 type Account struct {
 	ID        string `json:"id"`
 	PeopleID  string `json:"people_id"`
-	IsAdmin   bool   `json:"is_admin"`
+	Role      string `json:"role"`
 	Username  string `json:"username"`
 	Password  string `json:"password"`
 	CreatedAt string `json:"created_at"`
