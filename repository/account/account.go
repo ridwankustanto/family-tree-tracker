@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 	"database/sql"
-	"log"
+	_"log"
 
 	"github.com/ridwankustanto/family-tree-tracker/models"
 )
@@ -40,7 +40,7 @@ func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account)
 
 func (r postgresRepository) Authenticate(ctx context.Context, a models.AccountLogin) (models.AccountLogin, error) {
 	err := r.db.QueryRow("SELECT username, password FROM accounts WHERE username=$1", a.Username).Scan(&a.Username, &a.Password)
-	log.Println(a, "repository")
+	// log.Println(a, "repository")
 	if(err != nil){
 		return a, err
 	}

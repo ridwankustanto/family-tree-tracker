@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -44,9 +45,9 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 }
 
 func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (*models.AccountLogin, error){
-	log.Println(account)
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), 14)
-	account.Password = string(hashedPassword)
+	log.Println("input: ", account)
+	// hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), 14)
+	// account.Password = string(hashedPassword)
 	// x is the right info from the DB
 	x, err := s.repository.Authenticate(ctx, account); 
 	if err != nil {
@@ -55,9 +56,10 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 
 	err = bcrypt.CompareHashAndPassword([]byte(x.Password), []byte(account.Password))
 	if err != nil{
-
+		return nil, errors.New("Invalid username or password")
 	}
+	// log.Println(err)
 	
-	log.Println(&account)
-	return &account, nil
+	// log.Println(&account)
+	return &x, nil
 }
