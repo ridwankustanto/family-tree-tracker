@@ -1,5 +1,17 @@
+CREATE TYPE roles as enum('1', '2', '3');
+
+CREATE TABLE IF NOT EXISTS accounts (
+  id CHAR(32) PRIMARY KEY,
+  username VARCHAR(64) NOT NULL,
+  password VARCHAR(128) NOT NULL,
+  role roles NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS people (
   id CHAR(32) PRIMARY KEY,
+  account_id VARCHAR(64) NOT NULL,
   family_id VARCHAR(64) NOT NULL,
   fullname VARCHAR(64) NOT NULL,
   nickname VARCHAR(16) NOT NULL,
@@ -19,19 +31,9 @@ CREATE TABLE IF NOT EXISTS people (
   photo VARCHAR(255) NOT NULL,
   is_origin BOOLEAN NOT NULL,
   created_at DATE NOT NULL,
-  updated_at DATE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS accounts (
-  id CHAR(32) PRIMARY KEY,
-  people_id CHAR(32) NOT NULL,
-  username VARCHAR(64) NOT NULL,
-  password VARCHAR(128) NOT NULL,
-  created_at DATE NOT NULL,
   updated_at DATE NOT NULL,
-  is_admin BOOLEAN NOT NULL,
-  CONSTRAINT FK_AccountPeople FOREIGN KEY (people_id)
-  REFERENCES people(id)
+  CONSTRAINT FK_PeopleAccount FOREIGN KEY (account_id)
+  REFERENCES accounts(id)
 );
 
 CREATE TABLE IF NOT EXISTS people_has_relations (
@@ -149,3 +151,11 @@ CREATE TABLE IF NOT EXISTS subdistricts(
   CONSTRAINT FK_City FOREIGN KEY (district_id)
   REFERENCES districts(id)
 );
+CREATE TABLE IF NOT EXISTS site_settings (
+  id CHAR(32) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  value VARCHAR(255) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL
+);
+

@@ -2,6 +2,7 @@ package models
 
 type People struct {
 	ID             string `json:"id"`
+	AccountID      string `json:"account_id"`
 	FirstName      string `json:"firstname"`
 	LastName       string `json:"lastname"`
 	Nickname       string `json:"nickname"`

@@ -33,8 +33,8 @@ func (r *postgresRepository) Ping() error {
 
 // create acc 2nd step
 func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account) error {
-	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, username, password, people_id, is_admin, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7)",
-		a.ID, a.Username, a.Password, a.PeopleID, a.IsAdmin, a.CreatedAt, a.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, username, password, role, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)",
+		a.ID, a.Username, a.Password, a.Role, a.CreatedAt, a.UpdatedAt)
 	return err
 }
 
