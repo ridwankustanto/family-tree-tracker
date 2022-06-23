@@ -1,21 +1,16 @@
 package account
 
 import (
-	"log"
+	// "log"
+	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
 	accountClient "github.com/ridwankustanto/family-tree-tracker/clients/account"
 	accountRepo "github.com/ridwankustanto/family-tree-tracker/repository/account"
 	accountService "github.com/ridwankustanto/family-tree-tracker/services/account"
-	"github.com/ridwankustanto/family-tree-tracker/utils/database"
 )
 
-func Routes(api fiber.Router) {
-
-	db, err := database.InitDB()
-	if err != nil {
-		log.Fatal(err)
-	}
+func Routes(api fiber.Router, db *sql.DB) {
 
 	repo := accountRepo.NewPostgresRepository(db)
 	srv := accountService.NewService(repo)

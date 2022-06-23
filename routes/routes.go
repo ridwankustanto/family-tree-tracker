@@ -1,8 +1,11 @@
 package routes
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/ridwankustanto/family-tree-tracker/routes/account"
+	"github.com/ridwankustanto/family-tree-tracker/utils/database"
 )
 
 func Routes(app *fiber.App) {
@@ -11,6 +14,11 @@ func Routes(app *fiber.App) {
 		return c.SendString("Hello, World!")
 	})
 
+	db, err := database.InitDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Regis your routes
-	account.Routes(api)
+	account.Routes(api, db)
 }

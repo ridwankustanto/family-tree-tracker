@@ -75,7 +75,7 @@ func Authenticate(c *fiber.Ctx, srv accountService.Service)error{
 			Message:      clients.ErrBadGateway,
 		})
 	}
-
+	// Call generate token function
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error:   false,
 		Message: "logged in",
