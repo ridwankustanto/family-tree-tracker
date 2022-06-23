@@ -97,3 +97,55 @@ CREATE TABLE IF NOT EXISTS form_verifications (
   CONSTRAINT FK_FormUsedBy FOREIGN KEY (used_by)
   REFERENCES people(id)
 );
+
+CREATE TABLE IF NOT EXISTS country (
+  id CHAR(32) PRIMARY KEY,
+  name VARCHAR(64) NOT NULL,
+  code VARCHAR(64) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS provinces (
+  id CHAR(32) PRIMARY KEY,
+  country_id CHAR(32) NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  code VARCHAR(64) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  CONSTRAINT FK_Country FOREIGN KEY (country_id)
+  REFERENCES country(id)
+);
+
+CREATE TABLE IF NOT EXISTS city (
+  id CHAR(32) PRIMARY KEY,
+  province_id CHAR(32) NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  code VARCHAR(64) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  CONSTRAINT FK_Provinces FOREIGN KEY (province_id)
+  REFERENCES provinces(id)
+);
+
+CREATE TABLE IF NOT EXISTS districts(
+  id CHAR(32) PRIMARY KEY,
+  city_id CHAR(32) NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  code VARCHAR(64) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  CONSTRAINT FK_City FOREIGN KEY (city_id)
+  REFERENCES city(id)
+);
+
+CREATE TABLE IF NOT EXISTS subdistricts(
+  id CHAR(32) PRIMARY KEY,
+  district_id CHAR(32) NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  code VARCHAR(64) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  CONSTRAINT FK_City FOREIGN KEY (district_id)
+  REFERENCES districts(id)
+);

@@ -22,7 +22,11 @@ func Routes(api fiber.Router) {
 
 	account := api.Group("account")
 
-	account.Post("/+", func(c *fiber.Ctx) error {
+	account.Post("/register", func(c *fiber.Ctx) error {
 		return accountClient.CreateAccount(c, srv)
+	})
+
+	account.Post("/login", func(c *fiber.Ctx) error {
+		return accountClient.Authenticate(c, srv)
 	})
 }
