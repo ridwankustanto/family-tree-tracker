@@ -11,7 +11,7 @@ import (
 )
 
 func Routes(api fiber.Router, db *sql.DB) {
-
+	//NewPostgresRepository digunakan untuk initizialie datbase biar di repo gk usah initDB
 	repo := accountRepo.NewPostgresRepository(db)
 	srv := accountService.NewService(repo)
 

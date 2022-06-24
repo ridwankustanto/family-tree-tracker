@@ -7,6 +7,7 @@ require github.com/gofiber/fiber/v2 v2.34.1
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/gofiber/jwt/v2 v2.2.7 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect

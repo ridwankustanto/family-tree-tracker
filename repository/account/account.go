@@ -39,10 +39,12 @@ func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account)
 }
 
 func (r postgresRepository) Authenticate(ctx context.Context, a models.AccountLogin) (models.AccountLogin, error) {
-	err := r.db.QueryRow("SELECT username, password FROM accounts WHERE username=$1", a.Username).Scan(&a.Username, &a.Password)
+	err := r.db.QueryRow("SELECT id, username, password FROM accounts WHERE username=$1", a.Username).Scan(&a.ID, &a.Username, &a.Password)
 	// log.Println(a, "repository")
 	if(err != nil){
 		return a, err
 	}
 	return a, nil
 }
+
+

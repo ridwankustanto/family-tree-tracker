@@ -13,15 +13,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// interface 
 type Service interface {
-	Authenticate(ctx context.Context, account models.AccountLogin) (*models.AccountLogin, error)
+	Authenticate(ctx context.Context, account models.AccountLogin) (string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
 }
 
 type service struct {
 	repository account.Repository
 }
-
+//New service tied to Service interface karena method dibawah bind ke service
 func NewService(r account.Repository) Service {
 	return &service{r}
 }
@@ -44,24 +45,25 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 	return &account, nil
 }
 
-func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (*models.AccountLogin, error){
+func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (string, error){
 	log.Println("input: ", account)
-	// hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), 14)
-	// account.Password = string(hashedPassword)
-	// x is the right info from the DB
+
 	x, err := s.repository.Authenticate(ctx, account); 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(x.Password), []byte(account.Password))
 	if err != nil{
-		return nil, errors.New("Invalid username or password")
+		return "", errors.New("Invalid username or password")
 	}
+	
+	token, err := utils.GenerateToken(&x, "SECRET_TUNNEL")
 	// log.Println(err)
 	
 	// log.Println(&account)
-	return &x, nil
+	return token, nil
 }
+
 
 
