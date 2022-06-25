@@ -58,7 +58,7 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 		return "", errors.New("Invalid username or password")
 	}
 	
-	token, err := utils.GenerateToken(&x, "SECRET_TUNNEL")
+	token, err := utils.GenerateToken(&x)
 	// log.Println(err)
 	
 	// log.Println(&account)

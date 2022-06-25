@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"os"
 	"strings"
 	"time"
 
@@ -22,14 +23,14 @@ func FormatUUID(s string) string {
 	return strings.ReplaceAll(s, "-", "")
 }
 
-func GenerateToken(input *models.AccountLogin, key string) (string, error) {
+func GenerateToken(input *models.AccountLogin) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = input.ID
 	claims["username"] = input.Username
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	
-	signedToken, err := token.SignedString([]byte(key))
+	signedToken, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 
 	if(err != nil){
 		return "", err
