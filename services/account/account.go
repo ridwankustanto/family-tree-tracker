@@ -15,7 +15,7 @@ import (
 
 // interface 
 type Service interface {
-	Authenticate(ctx context.Context, account models.AccountLogin) (string, error)
+	Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
 }
 
@@ -33,7 +33,7 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 
 	account.ID = utils.FormatUUID(uuid.New().String())
 	account.Password = string(hashedPassword)
-	account.PeopleID = "dbf6d29d25144d3aa54d44ad36c27b60"
+	// account.PeopleID = "dbf6d29d25144d3aa54d44ad36c27b60"
 	account.CreatedAt = time.Now().Format(layout)
 	account.UpdatedAt = time.Now().Format(layout)
 
@@ -45,24 +45,24 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 	return &account, nil
 }
 
-func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (string, error){
+func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string,  error){
 	log.Println("input: ", account)
 
 	x, err := s.repository.Authenticate(ctx, account); 
 	if err != nil {
-		return "", err
+		return x, "", err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(x.Password), []byte(account.Password))
 	if err != nil{
-		return "", errors.New("Invalid username or password")
+		return x, "", errors.New("Invalid username or password")
 	}
 	
 	token, err := utils.GenerateToken(&x)
 	// log.Println(err)
 	
 	// log.Println(&account)
-	return token, nil
+	return x, token, nil
 }
 
 

@@ -7,6 +7,13 @@ type Response struct {
 	Data         interface{} `json:"data"`
 }
 
+type ResponseLogin struct{
+	Message      string      `json:"message"`
+	Data         interface{} `json:"data"`
+	Token         interface{} `json:"token"`
+	
+}
+
 // Error message
 const (
 	ErrSomethingWentWrong = "something went wrong"

@@ -2,7 +2,6 @@ package models
 
 type Account struct {
 	ID        string `json:"id"`
-	PeopleID  string `json:"people_id"`
 	Role      string `json:"role"`
 	Username  string `json:"username"`
 	Password  string `json:"password"`
@@ -13,6 +12,6 @@ type Account struct {
 type AccountLogin struct {
 	ID        string `json:"id"`
 	Username  string `json:"username"`
-	Password  string `json:"password"`
+	Password  string `json:"-"`
 }
 

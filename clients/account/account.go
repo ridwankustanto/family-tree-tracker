@@ -66,7 +66,7 @@ func Authenticate(c *fiber.Ctx, srv accountService.Service)error{
 	// Validate
 
 	var err error
-	token, err := srv.Authenticate(ctx, *account)
+	data, token, err := srv.Authenticate(ctx, *account)
 	if err != nil {
 		log.Println("svr.Authenticate", err)
 		return c.Status(http.StatusBadGateway).JSON(clients.Response{
@@ -76,9 +76,9 @@ func Authenticate(c *fiber.Ctx, srv accountService.Service)error{
 		})
 	}
 	// Call generate token function
-	return c.Status(http.StatusOK).JSON(clients.Response{
-		Error:   false,
+	return c.Status(http.StatusOK).JSON(clients.ResponseLogin{
 		Message: "logged in",
-		Data:    token,
+		Token: token,
+		Data:    &data,
 	})
 }
