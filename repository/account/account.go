@@ -3,6 +3,7 @@ package account
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 	_ "log"
 
@@ -40,8 +41,7 @@ func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account)
 }
 
 func (r postgresRepository) Authenticate(ctx context.Context, a models.AccountLogin) (models.AccountLogin, error) {
-	err := r.db.QueryRow("SELECT id, username, password FROM accounts WHERE username=$1", a.Username).Scan(&a.ID, &a.Username, &a.Password)
-	// log.Println(a, "repository")
+	err := r.db.QueryRow("SELECT id, username, password, role FROM accounts WHERE username=$1", a.Username).Scan(&a.ID, &a.Username, &a.Password, &a.Role)
 	if(err != nil){
 		return a, err
 	}
@@ -56,19 +56,29 @@ func (r postgresRepository) Location(ctx context.Context, a models.LocationInput
 		a.ID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
 		return "Country Inserted", err
 	case "provinces":
+		_, err:= r.db.ExecContext(ctx, "INSERT INTO provinces(id, country_id,  name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)", 
+		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
 		log.Println("provinces")
+		return "Province Inserted", err
 	case "city":
-		log.Println("city")
+		_, err:= r.db.ExecContext(ctx, "INSERT INTO city(id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
+		log.Println("City")
+		return "City Inserted", err
 	case "districts":
-		log.Println("districts")
+		_, err:= r.db.ExecContext(ctx, "INSERT INTO districts(id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
+		log.Println("district")
+		return "Districts Inserted", err
 	case "subdistricts":
-		log.Println("districts")
+		_, err:= r.db.ExecContext(ctx, "INSERT INTO subdistricts(id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
+		log.Println("subdistricts")
+		return "Sub Districts Inserted", err
 	default:
 		log.Println("Enter Location Type")
+		return "", errors.New("Enter Location Type / 'type'")
 	}
-
-
-	return "", nil
 
 
 }
