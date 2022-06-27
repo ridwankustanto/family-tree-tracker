@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 	"database/sql"
-	_"log"
+	_ "log"
 
 	"github.com/ridwankustanto/family-tree-tracker/models"
 )
@@ -45,6 +45,12 @@ func (r postgresRepository) Authenticate(ctx context.Context, a models.AccountLo
 		return a, err
 	}
 	return a, nil
+}
+
+func (r postgresRepository) Location(ctx context.Context) (string, error){
+	
+	return "", nil
+
 }
 
 
