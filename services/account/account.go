@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// interface 
+// interface
 type Service interface {
 	Authenticate(ctx context.Context, account models.AccountLogin) (string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
@@ -46,6 +46,7 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 }
 
 func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (string, error){
+	
 	log.Println("input: ", account)
 
 	x, err := s.repository.Authenticate(ctx, account); 
@@ -62,6 +63,10 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 	// log.Println(err)
 	
 	// log.Println(&account)
+	// kalo 1 gak usah kirim data x kalo 2/3 kasih data si x
+	if(x.Role != "1"){
+		return token, nil
+	}
 	return token, nil
 }
 
