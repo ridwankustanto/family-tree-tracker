@@ -20,5 +20,3 @@ func ForeverSleep(d time.Duration, f func(int) error) {
 func FormatUUID(s string) string {
 	return strings.ReplaceAll(s, "-", "")
 }
-
-

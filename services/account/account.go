@@ -33,7 +33,7 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 
 	account.ID = utils.FormatUUID(uuid.New().String())
 	account.Password = string(hashedPassword)
-	account.PeopleID = "dbf6d29d25144d3aa54d44ad36c27b60"
+	// account.PeopleID = "dbf6d29d25144d3aa54d44ad36c27b60"
 	account.CreatedAt = time.Now().Format(layout)
 	account.UpdatedAt = time.Now().Format(layout)
 
