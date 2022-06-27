@@ -13,6 +13,6 @@ type AccountLogin struct {
 	ID        string `json:"id"`
 	Role      string `json:"role"`
 	Username  string `json:"username"`
-	Password  string `json:"password"`
+	Password  string `json:"-"`
 }
 

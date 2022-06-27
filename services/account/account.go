@@ -15,7 +15,7 @@ import (
 
 // interface
 type Service interface {
-	Authenticate(ctx context.Context, account models.AccountLogin) (string, error)
+	Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
 }
 
@@ -45,29 +45,24 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 	return &account, nil
 }
 
-func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (string, error){
-	
+func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string,  error){
 	log.Println("input: ", account)
 
 	x, err := s.repository.Authenticate(ctx, account); 
 	if err != nil {
-		return "", err
+		return x, "", err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(x.Password), []byte(account.Password))
 	if err != nil{
-		return "", errors.New("Invalid username or password")
+		return x, "", errors.New("Invalid username or password")
 	}
 	
 	token, err := utils.GenerateToken(&x)
 	// log.Println(err)
 	
 	// log.Println(&account)
-	// kalo 1 gak usah kirim data x kalo 2/3 kasih data si x
-	if(x.Role != "1"){
-		return token, nil
-	}
-	return token, nil
+	return x, token, nil
 }
 
 
