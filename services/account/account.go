@@ -18,7 +18,7 @@ type Service interface {
 	Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
 }
-
+//sambungin ke Repository yang ada di account yang ngontrakin function yang ada
 type service struct {
 	repository account.Repository
 }
@@ -64,6 +64,7 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 	// log.Println(&account)
 	return x, token, nil
 }
+
 
 
 

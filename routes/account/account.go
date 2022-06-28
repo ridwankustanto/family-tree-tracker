@@ -13,8 +13,10 @@ import (
 func Routes(api fiber.Router, db *sql.DB) {
 	//NewPostgresRepository digunakan untuk initizialie datbase biar di repo gk usah initDB
 	repo := accountRepo.NewPostgresRepository(db)
-	srv := accountService.NewService(repo)
 
+	//taking in repo because service is equivalent to controller while repo is equivallent to model 
+	srv := accountService.NewService(repo)
+	// Clients is the body parser, the upper part | Service is the controller | Repo is the model that connects themselves to database
 	account := api.Group("account")
 
 	account.Post("/register", func(c *fiber.Ctx) error {
@@ -23,5 +25,9 @@ func Routes(api fiber.Router, db *sql.DB) {
 
 	account.Post("/login", func(c *fiber.Ctx) error {
 		return accountClient.Authenticate(c, srv)
+	})
+
+	account.Post("/location", func(c * fiber.Ctx) error {
+		return nil
 	})
 }

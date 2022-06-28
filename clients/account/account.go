@@ -82,3 +82,5 @@ func Authenticate(c *fiber.Ctx, srv accountService.Service)error{
 		Data:    &data,
 	})
 }
+
+
