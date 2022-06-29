@@ -18,6 +18,7 @@ type ResponseLogin struct{
 const (
 	ErrSomethingWentWrong = "something went wrong"
 	ErrBadGateway         = "bad gateway"
+	NotAuthorized		  = "You are not authorized to enter this area"
 )
 
 // Success message
