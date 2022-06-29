@@ -30,21 +30,18 @@ func Authorize(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	role := claims["role"].(string)
-	log.Println(role)
 
-	if(role != "3"){
-		log.Println("You're an admin")
-		return c.Next()
+	if role == "3" {
+		log.Println("You're not an admin")
+		return errors.New("You're not allowed to enter this area")
 	}
 
-	log.Println("You're not an admin")
-	// err:=
-	// log.Println(err)
-	return errors.New("You're not allowed to enter this area")
-	
+	log.Println("You're an admin")
+	return nil
+
 }
 
-func GetOut(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "Unauthorized", "message": "You are not allowed to enter this area"})
+func GetOut(c *fiber.Ctx, message string) error {
+	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "Unauthorized", "message": message})
 
 }

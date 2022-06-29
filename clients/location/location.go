@@ -2,6 +2,7 @@ package location
 
 import (
 	"context"
+
 	"fmt"
 	"log"
 	"net/http"
@@ -11,11 +12,18 @@ import (
 	"github.com/ridwankustanto/family-tree-tracker/clients"
 	"github.com/ridwankustanto/family-tree-tracker/models"
 	locationService "github.com/ridwankustanto/family-tree-tracker/services/location"
+	"github.com/ridwankustanto/family-tree-tracker/utils/middlewares"
+
+	
 )
 
 func CreateLocation(c *fiber.Ctx, srv locationService.Service) error {
+	role := middlewares.Authorize(c); 
+	if role !=nil{
+		log.Println("Error You are not Authorized: ", role)
+		return middlewares.GetOut(c, role.Error())
+	}
 	ctx := context.Background()
-
 	location := new(models.LocationInput)
 
 	if err := c.BodyParser(location); err != nil {

@@ -76,7 +76,12 @@ func Authenticate(c *fiber.Ctx, srv accountService.Service)error{
 		})
 	}
 	data.Password = ""
-	
+	if data.Role == "1" {
+		return c.Status(http.StatusOK).JSON(clients.ResponseLogin{
+			Message: "logged in",
+			Token: token,
+		})
+	}
 	// Call generate token function
 	return c.Status(http.StatusOK).JSON(clients.ResponseLogin{
 		Message: "logged in",

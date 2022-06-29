@@ -1,11 +1,14 @@
 package location
 
-import(
+import (
 	"database/sql"
+	// "log"
+
 	"github.com/gofiber/fiber/v2"
 	locationClient "github.com/ridwankustanto/family-tree-tracker/clients/location"
 	locationRepo "github.com/ridwankustanto/family-tree-tracker/repository/location"
 	locationService "github.com/ridwankustanto/family-tree-tracker/services/location"
+	"github.com/ridwankustanto/family-tree-tracker/utils/middlewares"
 )
 
 func Routes(api fiber.Router, db *sql.DB) {
@@ -14,7 +17,7 @@ func Routes(api fiber.Router, db *sql.DB) {
 	srv:= locationService.NewService(repo)
 
 	location := api.Group("location")
-
+	location.Use(middlewares.Restrict())
 	location.Post("/add", func(c *fiber.Ctx) error {
 		return locationClient.CreateLocation(c, srv)
 	})
