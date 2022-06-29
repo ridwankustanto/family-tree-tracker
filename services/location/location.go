@@ -10,7 +10,7 @@ import (
 	"github.com/ridwankustanto/family-tree-tracker/utils"
 )
 type Service interface{
-	CreateLocation(ctx context.Context, input models.LocationInput)(string, error)
+	CreateLocation(ctx context.Context, input models.LocationInput)(*models.LocationInput, string, error)
 }
 
 type service struct{
@@ -21,7 +21,7 @@ func NewService(r location.Repository) Service {
 	return &service{r}
 }
 
-func (s service) CreateLocation(ctx context.Context, input models.LocationInput) (string, error){
+func (s service) CreateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, string, error){
 	layout := "2006-01-02T15:04:05-0700"
 
 	input.ID = utils.FormatUUID(uuid.New().String())
@@ -30,7 +30,7 @@ func (s service) CreateLocation(ctx context.Context, input models.LocationInput)
 
 	message, err := s.repository.CreateLocation(ctx, input)
 	if err != nil {
-		return "", err
+		return &input, "", err
 	}
-	return message, nil
+	return &input, message, nil
 }

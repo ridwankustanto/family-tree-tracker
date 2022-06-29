@@ -1,6 +1,8 @@
 package utils
 
 import (
+	// "errors"
+	"log"
 	"os"
 	"time"
 
@@ -17,6 +19,12 @@ func Restrict() fiber.Handler {
 	})
 }
 
+func Authorize(c *fiber.Ctx){
+	token := c.Locals("user").(*jwt.Token)
+	log.Println(token.Header)
+	
+}
+
 func jwtError(c *fiber.Ctx, err error) error {
 	if err.Error() == "Missing or malformed JWT" {
 		return c.Status(fiber.StatusBadRequest).
@@ -31,6 +39,7 @@ func GenerateToken(input *models.AccountLogin) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = input.ID
 	claims["username"] = input.Username
+	claims["role"] = input.Role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	
 	signedToken, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))

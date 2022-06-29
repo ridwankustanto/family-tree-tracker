@@ -48,21 +48,21 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 func (s service) Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string,  error){
 	log.Println("input: ", account)
 
-	x, err := s.repository.Authenticate(ctx, account); 
+	acc, err := s.repository.Authenticate(ctx, account); 
 	if err != nil {
-		return x, "", err
+		return acc, "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(x.Password), []byte(account.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(acc.Password), []byte(account.Password))
 	if err != nil{
-		return x, "", errors.New("Invalid username or password")
+		return acc, "", errors.New("Invalid username or password")
 	}
 	
-	token, err := utils.GenerateToken(&x)
+	token, err := utils.GenerateToken(&acc)
 	// log.Println(err)
 	
 	// log.Println(&account)
-	return x, token, nil
+	return acc, token, nil
 }
 
 

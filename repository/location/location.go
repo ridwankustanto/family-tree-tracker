@@ -34,6 +34,7 @@ func (r *postgresRepository) Ping() error {
 
 func (r postgresRepository) CreateLocation(ctx context.Context, a models.LocationInput) (string, error){
 	// kalo pake switch case
+	log.Println(a)
 	switch a.RequestType {
 	case "country":
 		result, err:= r.db.ExecContext(ctx, "INSERT INTO country(id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 

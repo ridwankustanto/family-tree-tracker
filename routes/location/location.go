@@ -18,4 +18,11 @@ func Routes(api fiber.Router, db *sql.DB) {
 	location.Post("/add", func(c *fiber.Ctx) error {
 		return locationClient.CreateLocation(c, srv)
 	})
+
+	location.Get("/locations", func(c *fiber.Ctx) error {
+		return nil
+	})
+	location.Post("/edit", func(c *fiber.Ctx) error {
+		return nil
+	})
 }
