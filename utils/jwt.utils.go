@@ -2,7 +2,7 @@ package utils
 
 import (
 	// "errors"
-	"log"
+	// "log"
 	"os"
 	"time"
 
@@ -19,9 +19,29 @@ func Restrict() fiber.Handler {
 	})
 }
 
-func Authorize(c *fiber.Ctx){
-	token := c.Locals("user").(*jwt.Token)
-	log.Println(token.Header)
+func Authorize(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	role := claims["role"].(string)
+	if(role == "3"){
+		return c.Status(fiber.StatusUnauthorized).
+	JSON(fiber.Map{"status": "Unauthorized", "message": "You are not allowed to enter this area"})
+	}
+
+	// switch permission {
+	// case "superadmin":
+	// 	if(role != "1"){
+	// 		return c.Status(fiber.StatusUnauthorized).
+	// 	JSON(fiber.Map{"status": "Unauthorized", "message": "You are not allowed to enter this area"})
+	// 	}
+	// case "admin":
+	// 	if(role == "3"){
+	// 		return c.Status(fiber.StatusUnauthorized).
+	// 	JSON(fiber.Map{"status": "Unauthorized", "message": "You are not allowed to enter this area"})
+	// 	}
+	// }
+
+	return c.Next()
 	
 }
 

@@ -27,7 +27,4 @@ func Routes(api fiber.Router, db *sql.DB) {
 		return accountClient.Authenticate(c, srv)
 	})
 
-	account.Post("/location", func(c * fiber.Ctx) error {
-		return nil
-	})
 }
