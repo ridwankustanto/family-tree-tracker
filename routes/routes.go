@@ -19,17 +19,6 @@ func Routes(app *fiber.App) {
 		return c.SendString("Hello, World!")
 	})
 
-	test := app.Group("test")
-	test.Use(middlewares.Restrict())
-	test.Get("/", func(c *fiber.Ctx) error {
-		err := middlewares.Authorize(c)
-		log.Println("middlewares.Authorize(c)", err)
-		if err != nil {
-			return middlewares.GetOut(c, err.Error())
-		}
-		return c.SendString("Hello, World!")
-	})
-
 	db, err := database.InitDB()
 	if err != nil {
 		log.Fatal(err)

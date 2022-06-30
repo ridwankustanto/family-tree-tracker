@@ -14,6 +14,7 @@ type Repository interface {
 	Close()
 	Ping() error
 	CreateLocation(ctx context.Context, a models.LocationInput) (string, error)
+	GetCountry(ctx context.Context, input models.Country)(models.CountryReturn, error)
 }
 
 type postgresRepository struct{
@@ -65,4 +66,29 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 		log.Println("Enter Location Type")
 		return "", errors.New("Enter Location Type / 'type'")
 	}
+}
+
+func (r postgresRepository) GetCountry(ctx context.Context, input models.Country)(models.CountryReturn, error){
+	err := r.db.QueryRow("SELECT id, name, code FROM country WHERE id=$1", input.ID).Scan(&input.ID, &input.Name, &input.Code)
+	if(err != nil){
+		return models.CountryReturn{}, err
+	}
+	rows, err := r.db.Query("SELECT id, name, code, country_id FROM provinces WHERE country_id=$1", input.ID)
+	if(err != nil){
+		
+	}
+	var array []models.Province
+	for rows.Next(){
+		var arr models.Province
+		if err := rows.Scan(&arr.ID, &arr.CountryID, &arr.Name, &arr.Code); err != nil {
+			return models.CountryReturn{Provinces: array}, err
+		}
+		array = append(array, arr)
+	}
+	if err = rows.Err(); err != nil {
+		return models.CountryReturn{Provinces: array}, err
+	}
+	
+	return models.CountryReturn{Name: input.Name, Code: input.Code, Provinces: array}, nil
+
 }

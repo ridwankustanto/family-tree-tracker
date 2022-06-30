@@ -41,7 +41,9 @@ func Authorize(c *fiber.Ctx) error {
 
 }
 
+
 func GetOut(c *fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "Unauthorized", "message": message})
 
 }
+
