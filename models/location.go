@@ -23,11 +23,47 @@ type Province struct {
 	Code 		string `json:"code"`
 }
 
+type City struct {
+	ID			string `json:"id"`
+	ProvinceID	string `json:"province_id"`
+	Name 		string `json:"name"`
+	Code 		string `json:"code"`
+}
+
+type District struct {
+	ID			string `json:"id"`
+	CityID	string `json:"city_id"`
+	Name 		string `json:"name"`
+	Code 		string `json:"code"`	
+}
+
+type Subdistrict struct {
+	ID			string `json:"id"`
+	DistrictID	string `json:"district_id"`
+	Name 		string `json:"name"`
+	Code 		string `json:"code"`
+}
+
 type CountryReturn struct {
+	ID			string `json:"id"`
 	Name		string `'json:"name"`
 	Code 		string `json:"code"`
 	Provinces 	[]Province `json:"provinces"`
 }
 
+type ProvinceReturn struct {
+	ID			string `json:"id"`
+	CountryID	string `json:"province_id"`	
+	Name		string `'json:"name"`
+	Code 		string `json:"code"`
+	City 		[]City `json:"provinces"`
+}
 
+type CityReturn struct {
+	ID			string `json:"id"`
+	ProvinceID	string `json:"province_id"`	
+	Name		string `'json:"name"`
+	Code 		string `json:"code"`
+	District 	[]District `json:"provinces"`
+}
 

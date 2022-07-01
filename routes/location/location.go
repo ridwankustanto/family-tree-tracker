@@ -23,7 +23,7 @@ func Routes(api fiber.Router, db *sql.DB) {
 	})
 
 	location.Get("/country/:id", func(c *fiber.Ctx) error {
-		return nil
+		return locationClient.GetCountry(c, srv)
 	})
 	location.Post("/edit", func(c *fiber.Ctx) error {
 		return nil

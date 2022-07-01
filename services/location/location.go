@@ -11,6 +11,7 @@ import (
 )
 type Service interface{
 	CreateLocation(ctx context.Context, input models.LocationInput)(*models.LocationInput, string, error)
+	GetCountry(ctx context.Context, id string) (models.CountryReturn, error)
 }
 
 type service struct{
@@ -33,4 +34,12 @@ func (s service) CreateLocation(ctx context.Context, input models.LocationInput)
 		return &input, "", err
 	}
 	return &input, message, nil
+}
+
+func (s service) GetCountry(ctx context.Context, id string) (models.CountryReturn, error){
+	result, err := s.repository.GetCountry(ctx, id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
 }

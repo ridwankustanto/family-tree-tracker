@@ -54,3 +54,25 @@ func CreateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	})
 
 }
+
+func GetCountry(c *fiber.Ctx, srv locationService.Service) error {
+	ctx := context.Background()
+	id := c.Params("id")
+
+	result, err := srv.GetCountry(ctx, id)
+	if err != nil {
+		log.Println("srv.GetCountry()", err)
+		return c.Status(http.StatusBadGateway).JSON(clients.Response{
+			Error:        true,
+			DebugMessage: err.Error(),
+			Message:      clients.ErrBadGateway,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(clients.Response{
+		Error: false,
+		// Message: message,
+		Message: fmt.Sprintf("Data related to country found!"),
+		Data:    *&result,
+	})
+}

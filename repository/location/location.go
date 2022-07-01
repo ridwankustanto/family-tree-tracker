@@ -14,7 +14,8 @@ type Repository interface {
 	Close()
 	Ping() error
 	CreateLocation(ctx context.Context, a models.LocationInput) (string, error)
-	GetCountry(ctx context.Context, input models.Country)(models.CountryReturn, error)
+	GetCountry(ctx context.Context, id string)(models.CountryReturn, error)
+	GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error)
 }
 
 type postgresRepository struct{
@@ -68,27 +69,59 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 	}
 }
 
-func (r postgresRepository) GetCountry(ctx context.Context, input models.Country)(models.CountryReturn, error){
-	err := r.db.QueryRow("SELECT id, name, code FROM country WHERE id=$1", input.ID).Scan(&input.ID, &input.Name, &input.Code)
+func (r postgresRepository) GetCountry(ctx context.Context, id string)(models.CountryReturn, error){
+	country := new(models.CountryReturn)
+	err := r.db.QueryRow("SELECT id, name, code FROM country WHERE id=$1", id).Scan(&country.ID,&country.Name, &country.Code)
 	if(err != nil){
-		return models.CountryReturn{}, err
+		return *country, err
 	}
-	rows, err := r.db.Query("SELECT id, name, code, country_id FROM provinces WHERE country_id=$1", input.ID)
+	provinces, err := r.db.Query("SELECT id, name, code, country_id FROM provinces WHERE country_id=$1", id)
 	if(err != nil){
-		
+		return *country, err
 	}
-	var array []models.Province
-	for rows.Next(){
+	var province []models.Province
+	
+	for provinces.Next(){
 		var arr models.Province
-		if err := rows.Scan(&arr.ID, &arr.CountryID, &arr.Name, &arr.Code); err != nil {
-			return models.CountryReturn{Provinces: array}, err
+		if err := provinces.Scan(&arr.ID, &arr.CountryID, &arr.Name, &arr.Code); err != nil {
+			return *country, err
 		}
-		array = append(array, arr)
-	}
-	if err = rows.Err(); err != nil {
-		return models.CountryReturn{Provinces: array}, err
+		province = append(province, arr)
 	}
 	
-	return models.CountryReturn{Name: input.Name, Code: input.Code, Provinces: array}, nil
-
+	country.Provinces = province
+	if err = provinces.Err(); err != nil {
+		return *country, err
+	}
+	
+	return *country, nil
 }
+
+func (r postgresRepository) GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error){
+	province:= new(models.ProvinceReturn)
+
+	err := r.db.QueryRow("SELECT id, name, code, country_id FROM provinces WHERE country_id=$1", id).Scan(&province.ID, &province.CountryID, &province.Name, &province.Code)
+	if err != nil{
+		return *province,nil
+	}
+	cities, err := r.db.Query("SELECT id, name, code, province_id FROM city WHERE province_id=$1", id)
+	if err != nil{
+		return *province,nil
+	}
+	var city []models.City
+	for cities.Next(){
+		var arr models.City
+		if err := cities.Scan(&arr.ID, &arr.ProvinceID, &arr.Name, &arr.Code); err != nil {
+			return *province, err
+		}
+		city = append(city, arr)
+	}
+	
+	province.City = city
+	if err = cities.Err(); err != nil {
+		return *province, err
+	}
+
+	return *province, nil
+}
+
