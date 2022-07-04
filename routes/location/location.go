@@ -22,10 +22,31 @@ func Routes(api fiber.Router, db *sql.DB) {
 		return locationClient.CreateLocation(c, srv)
 	})
 
+	location.Get("/country", func(c *fiber.Ctx) error {
+		return locationClient.GetAllCountry(c, srv)
+	})
+
 	location.Get("/country/:id", func(c *fiber.Ctx) error {
 		return locationClient.GetCountry(c, srv)
 	})
-	location.Post("/edit", func(c *fiber.Ctx) error {
-		return nil
+	
+	location.Get("/province/:id", func(c *fiber.Ctx) error {
+		return locationClient.GetProvince(c, srv)
+	})
+	
+	location.Get("/city/:id", func(c *fiber.Ctx) error {
+		return locationClient.GetCity(c, srv)
+	})
+
+	location.Get("/district/:id", func(c *fiber.Ctx) error {
+		return locationClient.GetDistrict(c, srv)
+	})
+
+	location.Get("/subdistrict/:id", func(c *fiber.Ctx) error {
+		return locationClient.GetSubdistrict(c, srv)
+	})
+	
+	location.Post("/edit/:id", func(c *fiber.Ctx) error {
+		return locationClient.UpdateLocation(c, srv)
 	})
 }

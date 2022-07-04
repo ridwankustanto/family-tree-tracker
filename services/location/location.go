@@ -12,6 +12,12 @@ import (
 type Service interface{
 	CreateLocation(ctx context.Context, input models.LocationInput)(*models.LocationInput, string, error)
 	GetCountry(ctx context.Context, id string) (models.CountryReturn, error)
+	GetAllCountry(ctx context.Context)([]models.Country, error)
+	GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error)
+	GetCity(ctx context.Context, id string) (models.CityReturn, error)
+	GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error)
+	GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error)
+	UpdateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error)
 }
 
 type service struct{
@@ -42,4 +48,56 @@ func (s service) GetCountry(ctx context.Context, id string) (models.CountryRetur
 		return result, err
 	}
 	return result, nil
+}
+
+func (s service) GetAllCountry(ctx context.Context)([]models.Country, error){
+	result, err := s.repository.GetAllCountry(ctx)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (s service) GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error){
+	result, err := s.repository.GetProvince(ctx, id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func (s service) GetCity(ctx context.Context, id string) (models.CityReturn, error){
+	result, err := s.repository.GetCity(ctx, id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil	
+}
+
+func (s service) GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error){
+	result, err := s.repository.GetDistrict(ctx, id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil	
+}
+
+func (s service) GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error){
+	result, err := s.repository.GetSubdistrict(ctx, id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil	
+}
+
+func (s service) UpdateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error){
+	layout := "2006-01-02T15:04:05-0700"
+	input.UpdatedAt = time.Now().Format(layout)
+
+	_, err := s.repository.UpdateLocation(ctx, input)
+	if err != nil {
+		return &input, err
+	}
+	return &input, nil
 }

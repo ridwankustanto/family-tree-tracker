@@ -2,11 +2,11 @@ package models
 
 type LocationInput struct {
 	ID			string `json:"id"`
-	ParentID 	string `json:"parent_id"`
+	ParentID 	string `json:"parent_id,omitempty"`
 	Name 		string `json:"name"`
 	Code 		string `json:"code"`
 	RequestType	string `json:"type"`
-	CreatedAt 	string `json:"created_at"`
+	CreatedAt 	string `json:"created_at,omitempty"`
 	UpdatedAt 	string `json:"updated_at"`
 }
 
@@ -56,7 +56,7 @@ type ProvinceReturn struct {
 	CountryID	string `json:"province_id"`	
 	Name		string `'json:"name"`
 	Code 		string `json:"code"`
-	City 		[]City `json:"provinces"`
+	City 		[]City `json:"city"`
 }
 
 type CityReturn struct {
@@ -64,6 +64,14 @@ type CityReturn struct {
 	ProvinceID	string `json:"province_id"`	
 	Name		string `'json:"name"`
 	Code 		string `json:"code"`
-	District 	[]District `json:"provinces"`
+	District 	[]District `json:"districts"`
+}
+
+type DistrictReturn struct {
+	ID			string `json:"id"`
+	CityID		string `json:"city_id"`
+	Name		string `'json:"name"`
+	Code 		string `json:"code"`
+	Subdistrict []Subdistrict `json:"Subdistricts"`
 }
 

@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"database/sql"
-	"log"
+	// "database/sql"
+	// "log"
 	"strings"
 	"time"
 )
