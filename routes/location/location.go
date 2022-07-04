@@ -49,4 +49,6 @@ func Routes(api fiber.Router, db *sql.DB) {
 	location.Post("/edit/:id", func(c *fiber.Ctx) error {
 		return locationClient.UpdateLocation(c, srv)
 	})
+
+	
 }

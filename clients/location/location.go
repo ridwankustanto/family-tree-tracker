@@ -219,7 +219,7 @@ func UpdateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("%v%v Created!", strings.ToUpper(string(location.RequestType[0])), string(location.RequestType[1:])),
+		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.RequestType[0])), string(location.RequestType[1:])),
 		Data:    *location,
 	})
 }
