@@ -18,6 +18,7 @@ type Service interface{
 	GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error)
 	GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error)
 	UpdateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error)
+	DeleteLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error)
 }
 
 type service struct{
@@ -96,6 +97,14 @@ func (s service) UpdateLocation(ctx context.Context, input models.LocationInput)
 	input.UpdatedAt = time.Now().Format(layout)
 
 	_, err := s.repository.UpdateLocation(ctx, input)
+	if err != nil {
+		return &input, err
+	}
+	return &input, nil
+}
+
+func (s service) DeleteLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error){
+	_, err:= s.repository.DeleteLocation(ctx, input)
 	if err != nil {
 		return &input, err
 	}

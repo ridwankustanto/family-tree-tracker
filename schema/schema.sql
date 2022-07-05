@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS provinces (
   updated_at DATE NOT NULL,
   CONSTRAINT FK_Country FOREIGN KEY (country_id)
   REFERENCES country(id)
+  ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS city (
@@ -128,6 +129,7 @@ CREATE TABLE IF NOT EXISTS city (
   updated_at DATE NOT NULL,
   CONSTRAINT FK_Provinces FOREIGN KEY (province_id)
   REFERENCES provinces(id)
+  ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS districts(
@@ -139,6 +141,7 @@ CREATE TABLE IF NOT EXISTS districts(
   updated_at DATE NOT NULL,
   CONSTRAINT FK_City FOREIGN KEY (city_id)
   REFERENCES city(id)
+  ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS subdistricts(
@@ -150,6 +153,7 @@ CREATE TABLE IF NOT EXISTS subdistricts(
   updated_at DATE NOT NULL,
   CONSTRAINT FK_City FOREIGN KEY (district_id)
   REFERENCES districts(id)
+  ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS site_settings (
   id CHAR(32) PRIMARY KEY,

@@ -50,5 +50,8 @@ func Routes(api fiber.Router, db *sql.DB) {
 		return locationClient.UpdateLocation(c, srv)
 	})
 
+	location.Post("/delete/:id", func(c *fiber.Ctx) error {
+		return locationClient.DeleteLocation(c, srv)
+	})
 	
 }

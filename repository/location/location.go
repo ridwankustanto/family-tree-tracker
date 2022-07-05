@@ -21,6 +21,7 @@ type Repository interface {
 	GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error)
 	GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error)
 	UpdateLocation(ctx context.Context, input models.LocationInput) (sql.Result, error)
+	DeleteLocation(ctx context.Context, input models.LocationInput)(sql.Result, error)
 }
 
 type postgresRepository struct{
@@ -247,3 +248,34 @@ func (r postgresRepository) UpdateLocation(ctx context.Context, input models.Loc
 	}
 }
 
+func (r postgresRepository) DeleteLocation(ctx context.Context, input models.LocationInput)(sql.Result, error){
+	switch input.RequestType{
+	case "country":
+		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		log.Println(result)
+		return result, err
+		
+	case "provinces":
+		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		log.Println(result)
+		return result, err
+	
+	case "city":
+		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		log.Println(result)
+		return result, err
+	
+	case "districts":
+		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		log.Println(result)
+		return result, err
+	
+	case "subdistricts":
+		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		log.Println(result)
+		return result, err 
+	default:
+		log.Println("Enter Location Type!")
+		return nil, errors.New("Enter Location Type!")
+	}
+}
