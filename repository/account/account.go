@@ -10,8 +10,10 @@ import (
 type Repository interface {
 	Close()
 	Ping() error
+	CheckUserExist(ctx context.Context, username string)(bool, error)
 	CreateAccount(ctx context.Context, a models.Account) error
 	Authenticate(ctx context.Context, a models.AccountLogin) (models.AccountLogin ,error)
+	CheckSuperAdmin(ctx context.Context) (bool, error)
 }
 //tied contract by returning postgresRepository as repository and call postgresRepository on each struct
 type postgresRepository struct {
@@ -31,6 +33,17 @@ func (r *postgresRepository) Ping() error {
 }
 
 // create acc 2nd step
+
+func (r postgresRepository) CheckUserExist(ctx context.Context, username string)(bool, error){
+	err := r.db.QueryRow("SELECT id FROM accounts WHERE username=$1", username).Scan(&username)
+	if err != nil {
+		if err != sql.ErrNoRows{
+			return false, err
+		}
+		return false, nil
+	}
+	return true, nil
+}
 func (r postgresRepository) CreateAccount(ctx context.Context, a models.Account) error {
 	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, username, password, role, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)",
 		a.ID, a.Username, a.Password, a.Role, a.CreatedAt, a.UpdatedAt)
@@ -45,11 +58,15 @@ func (r postgresRepository) Authenticate(ctx context.Context, a models.AccountLo
 	return a, nil
 }
 
-
-
-/*func (r postgresRepository) GetAllLocation(ctx context.Context){
-	rowsCountry, err :=	 r.db.Query("SELECT * FROM country")
-
-	return rowsCountry, err
-}*/
+func (r postgresRepository) CheckSuperAdmin(ctx context.Context) (bool, error) {
+	var username string
+	err := r.db.QueryRow("SELECT id FROM accounts WHERE role=$1", "1").Scan(&username)
+	if err != nil {
+		if err != sql.ErrNoRows{
+			return false, err
+		}
+		return false, nil
+	}
+	return true, nil
+}
 

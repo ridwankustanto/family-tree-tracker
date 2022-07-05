@@ -33,9 +33,25 @@ func (s service) CreateAccount(ctx context.Context, account models.Account) (*mo
 
 	account.ID = utils.FormatUUID(uuid.New().String())
 	account.Password = string(hashedPassword)
-	// account.PeopleID = "dbf6d29d25144d3aa54d44ad36c27b60"
 	account.CreatedAt = time.Now().Format(layout)
 	account.UpdatedAt = time.Now().Format(layout)
+	exist, err := s.repository.CheckUserExist(ctx, account.Username)
+	if err != nil {
+		return nil, err
+	}else if exist == true {
+		return nil, errors.New("This username already existed!")
+	}
+
+	if account.Role == "1" {
+		exist, err := s.repository.CheckSuperAdmin(ctx);
+		if err != nil{
+			return nil, err
+		}else if exist == true {
+			return nil, errors.New("Role number one already existed!")
+		}
+	}else if account.Role == "2" {
+		return nil, errors.New("Super admin's permission required!")
+	}
 
 	log.Println(account)
 
