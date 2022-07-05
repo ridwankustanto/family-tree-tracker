@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS country (
   name VARCHAR(64) NOT NULL,
   code VARCHAR(64) NOT NULL,
   created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
+  updated_at DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS provinces (
