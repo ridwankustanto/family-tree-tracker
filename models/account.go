@@ -4,9 +4,9 @@ type Account struct {
 	ID        string `json:"id"`
 	Role      string `json:"role"`
 	Username  string `json:"username"`
-	Password  string `json:"password"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	Password  string `json:"password,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 type AccountLogin struct {
