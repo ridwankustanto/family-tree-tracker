@@ -14,6 +14,7 @@ type Repository interface {
 	CreateAccount(ctx context.Context, a models.Account) error
 	Authenticate(ctx context.Context, a models.AccountLogin) (models.AccountLogin ,error)
 	CheckSuperAdmin(ctx context.Context) (bool, error)
+	BestowAccount(ctx context.Context, input models.Account)(*sql.Result, error)
 }
 //tied contract by returning postgresRepository as repository and call postgresRepository on each struct
 type postgresRepository struct {
@@ -69,4 +70,14 @@ func (r postgresRepository) CheckSuperAdmin(ctx context.Context) (bool, error) {
 	}
 	return true, nil
 }
+
+func (r postgresRepository) BestowAccount(ctx context.Context, input models.Account)(*sql.Result, error){
+	result, err := r.db.ExecContext(ctx, "UPDATE accounts SET username=$2, role=$3, updated_at=$4 WHERE id=$1", input.ID, input.Username, input.Role, input.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 

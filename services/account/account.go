@@ -17,6 +17,7 @@ import (
 type Service interface {
 	Authenticate(ctx context.Context, account models.AccountLogin) (models.AccountLogin, string, error)
 	CreateAccount(ctx context.Context, account models.Account) (*models.Account, error)
+	BestowAccount(ctx context.Context, input models.Account)(*models.Account, error)
 }
 //sambungin ke Repository yang ada di account yang ngontrakin function yang ada
 type service struct {
@@ -79,6 +80,19 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 	
 	// log.Println(&account)
 	return acc, token, nil
+}
+
+func (s service) BestowAccount(ctx context.Context, input models.Account)(*models.Account, error){
+	layout := "2006-01-02T15:04:05-0700"
+	input.UpdatedAt = time.Now().Format(layout)
+	// if input.Role == "1" {
+	// 	return nil, errors.New("There may be only one superadmin")
+	// }
+	_, err := s.repository.BestowAccount(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &input, nil
 }
 
 
