@@ -76,15 +76,19 @@ func (s service) Authenticate(ctx context.Context, account models.AccountLogin) 
 	}
 	
 	token, err := utils.GenerateToken(&acc)
-	// log.Println(err)
-	
-	// log.Println(&account)
 	return acc, token, nil
 }
 
 func (s service) BestowAccount(ctx context.Context, input models.Account)(*models.Account, error){
 	layout := "2006-01-02T15:04:05-0700"
 	input.UpdatedAt = time.Now().Format(layout)
+	// exist, error := s.repository.CheckUserExist(ctx, input.Username)
+	// if error != nil {
+	// 	return nil, error
+	// }else if exist == true {
+	// 	return nil, errors.New("User's name already existed!")
+	// }
+
 	// if input.Role == "1" {
 	// 	return nil, errors.New("There may be only one superadmin")
 	// }

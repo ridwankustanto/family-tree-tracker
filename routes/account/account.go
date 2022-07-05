@@ -8,6 +8,7 @@ import (
 	accountClient "github.com/ridwankustanto/family-tree-tracker/clients/account"
 	accountRepo "github.com/ridwankustanto/family-tree-tracker/repository/account"
 	accountService "github.com/ridwankustanto/family-tree-tracker/services/account"
+	"github.com/ridwankustanto/family-tree-tracker/utils/middlewares"
 )
 
 func Routes(api fiber.Router, db *sql.DB) {
@@ -25,6 +26,10 @@ func Routes(api fiber.Router, db *sql.DB) {
 
 	account.Post("/login", func(c *fiber.Ctx) error {
 		return accountClient.Authenticate(c, srv)
+	})
+
+	account.Post("/bestow",middlewares.Restrict(), func(c *fiber.Ctx) error {
+		return accountClient.BestowAccount(c, srv)
 	})
 
 }
