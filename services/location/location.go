@@ -2,6 +2,7 @@ package location
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,12 +12,8 @@ import (
 )
 type Service interface{
 	CreateLocation(ctx context.Context, input models.LocationInput)(*models.LocationInput, string, error)
-	GetCountry(ctx context.Context, id string) (*models.CountryReturn, error)
-	GetAllCountry(ctx context.Context)(*[]models.Country, error)
-	GetProvince(ctx context.Context, id string) (*models.ProvinceReturn, error)
-	GetCity(ctx context.Context, id string) (*models.CityReturn, error)
-	GetDistrict(ctx context.Context, id string) (*models.DistrictReturn, error)
-	GetSubdistrict(ctx context.Context, id string) (*models.Subdistrict, error)
+	GetLocationByID(ctx context.Context, id string, request_type string) (*models.LocationReturn, error)
+	GetAllLocation(ctx context.Context, request_type string) (*[]models.LocationReturn, error)
 	UpdateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error)
 	DeleteLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error)
 }
@@ -42,53 +39,88 @@ func (s service) CreateLocation(ctx context.Context, input models.LocationInput)
 	return &input, message, nil
 }
 
-func (s service) GetCountry(ctx context.Context, id string) (*models.CountryReturn, error){
-	result, err := s.repository.GetCountry(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
+func(s service) GetLocationByID(ctx context.Context, id string, request_type string) (*models.LocationReturn, error) {
+	switch request_type{
+	case "country":
+		result, err := s.repository.GetCountryByID(ctx, id)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
 
-func (s service) GetAllCountry(ctx context.Context)(*[]models.Country, error){
-	result, err := s.repository.GetAllCountry(ctx)
-	if err != nil {
-		return nil, err
-	}
+	case "provinces":
+		result, err := s.repository.GetProvinceByID(ctx, id)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
 
-	return &result, nil
-}
+	case "city":
+		result, err := s.repository.GetCityByID(ctx, id)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
+	
+	case "districts":
+		result, err := s.repository.GetDistrictByID(ctx, id)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
+	
+	case "subdistricts":
+		result, err := s.repository.GetSubdistrictByID(ctx, id)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
 
-func (s service) GetProvince(ctx context.Context, id string) (*models.ProvinceReturn, error){
-	result, err := s.repository.GetProvince(ctx, id)
-	if err != nil {
-		return nil, err
+	default:
+		return nil, errors.New("Enter Location Type / 'type'")
 	}
-	return &result, nil
-}
+} 
 
-func (s service) GetCity(ctx context.Context, id string) (*models.CityReturn, error){
-	result, err := s.repository.GetCity(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil	
-}
+func (s service) GetAllLocation(ctx context.Context, request_type string) (*[]models.LocationReturn, error) {
+	switch request_type{
+	case "country":
+		result, err := s.repository.GetAllCountry(ctx)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
 
-func (s service) GetDistrict(ctx context.Context, id string) (*models.DistrictReturn, error){
-	result, err := s.repository.GetDistrict(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil	
-}
+	case "provinces":
+		result, err := s.repository.GetAllProvince(ctx)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
 
-func (s service) GetSubdistrict(ctx context.Context, id string) (*models.Subdistrict, error){
-	result, err := s.repository.GetSubdistrict(ctx, id)
-	if err != nil {
-		return nil, err
+	case "city":
+		result, err := s.repository.GetAllCity(ctx)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
+	
+	case "districts":
+		result, err := s.repository.GetAllDistrict(ctx)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
+	
+	case "subdistricts":
+		result, err := s.repository.GetAllSubdistrict(ctx)
+		if err!= nil {
+			return nil, err
+		}
+		return &result, nil
+
+	default:
+		return nil, errors.New("Enter Location Type / 'type'")
 	}
-	return &result, nil	
 }
 
 func (s service) UpdateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, error){

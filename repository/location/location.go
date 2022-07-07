@@ -14,12 +14,16 @@ type Repository interface {
 	Close()
 	Ping() error
 	CreateLocation(ctx context.Context, a models.LocationInput) (string, error)
-	GetCountry(ctx context.Context, id string)(models.CountryReturn, error)
-	GetAllCountry(ctx context.Context) ([]models.Country, error)
-	GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error)
-	GetCity(ctx context.Context, id string) (models.CityReturn, error)
-	GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error)
-	GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error)
+	GetCountryByID(ctx context.Context, id string)(models.LocationReturn, error)
+	GetProvinceByID(ctx context.Context, id string) (models.LocationReturn, error)
+	GetCityByID(ctx context.Context, id string) (models.LocationReturn, error)
+	GetDistrictByID(ctx context.Context, id string) (models.LocationReturn, error)
+	GetSubdistrictByID(ctx context.Context, id string) (models.LocationReturn, error)
+	GetAllCountry(ctx context.Context) ([]models.LocationReturn, error)
+	GetAllProvince(ctx context.Context) ([]models.LocationReturn, error)
+	GetAllCity(ctx context.Context) ([]models.LocationReturn, error)
+	GetAllDistrict(ctx context.Context) ([]models.LocationReturn, error)
+	GetAllSubdistrict(ctx context.Context) ([]models.LocationReturn, error)
 	UpdateLocation(ctx context.Context, input models.LocationInput) (sql.Result, error)
 	DeleteLocation(ctx context.Context, input models.LocationInput)(sql.Result, error)
 }
@@ -55,17 +59,17 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 		log.Println(result)
 		return "Provinces Created!", err
 	case "city":
-		result, err:= r.db.ExecContext(ctx, "INSERT INTO city(id, provinces_id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		result, err:= r.db.ExecContext(ctx, "INSERT INTO city(id, province_id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)", 
 		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
 		log.Println(result)
 		return "City Created!", err
 	case "districts":
-		result, err:= r.db.ExecContext(ctx, "INSERT INTO districts(id, city_id,  name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		result, err:= r.db.ExecContext(ctx, "INSERT INTO districts(id, city_id,  name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)", 
 		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
 		log.Println(result)
 		return "District Created", err
 	case "subdistricts":
-		result, err:= r.db.ExecContext(ctx, "INSERT INTO subdistricts(id, districts_id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
+		result, err:= r.db.ExecContext(ctx, "INSERT INTO subdistricts(id, district_id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)", 
 		a.ID, a.ParentID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
 		log.Println(result)
 		return "Subdistricts Created", err
@@ -75,8 +79,9 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 	}
 }
 
-func (r postgresRepository) GetCountry(ctx context.Context, id string)(models.CountryReturn, error){
-	country := new(models.CountryReturn)
+func (r postgresRepository) GetCountryByID(ctx context.Context, id string)(models.LocationReturn, error){
+	country := new(models.LocationReturn)
+	country.Type = "Country"
 	err := r.db.QueryRow("SELECT id, name, code FROM country WHERE id=$1", id).Scan(&country.ID,&country.Name, &country.Code)
 	if(err != nil){
 		return *country, err
@@ -85,17 +90,18 @@ func (r postgresRepository) GetCountry(ctx context.Context, id string)(models.Co
 	if(err != nil){
 		return *country, err
 	}
-	var province []models.Province
+	var province []models.Child
 	
 	for provinces.Next(){
-		var arr models.Province
-		if err := provinces.Scan(&arr.ID, &arr.CountryID, &arr.Name, &arr.Code); err != nil {
+		var arr models.Child
+		if err := provinces.Scan(&arr.ID, &arr.Name, &arr.Code, &arr.ParentID); err != nil {
 			return *country, err
 		}
+		arr.Type = "Province"
 		province = append(province, arr)
 	}
 	
-	country.Provinces = province
+	country.Child = province
 	if err = provinces.Err(); err != nil {
 		return *country, err
 	}
@@ -103,8 +109,107 @@ func (r postgresRepository) GetCountry(ctx context.Context, id string)(models.Co
 	return *country, nil
 }
 
-func (r postgresRepository) GetAllCountry(ctx context.Context) ([]models.Country, error){
-	var country []models.Country
+func (r postgresRepository) GetProvinceByID(ctx context.Context, id string) (models.LocationReturn, error){
+	province:= new(models.LocationReturn)
+	province.Type = "Province"
+	err := r.db.QueryRow("SELECT id, name, code, country_id FROM provinces WHERE id=$1", id).Scan(&province.ID, &province.ParentID, &province.Name, &province.Code)
+	if err != nil{
+		return *province, err
+	}
+	cities, err := r.db.Query("SELECT id, name, code, province_id FROM city WHERE province_id=$1", id)
+	if err != nil{
+		return *province, err
+	}
+	var city []models.Child
+	for cities.Next(){
+		var arr models.Child
+		if err := cities.Scan(&arr.ID, &arr.Name, &arr.Code, &arr.ParentID); err != nil {
+			return *province, err
+		}
+		arr.Type = "City"
+		city = append(city, arr)
+	}
+	
+	province.Child = city
+	if err = cities.Err(); err != nil {
+		return *province, err
+	}
+
+	return *province, nil
+}
+
+func (r postgresRepository) GetCityByID(ctx context.Context, id string) (models.LocationReturn, error){
+	city:= new(models.LocationReturn)
+	city.Type = "City"
+
+	err := r.db.QueryRow("SELECT id, province_id, name, code FROM city WHERE id=$1", id).Scan(&city.ID, &city.ParentID, &city.Name, &city.Code)
+	if err != nil{
+		return *city, err
+	}
+	districts, err := r.db.Query("SELECT id, city_id, name, code FROM district WHERE city_id=$1", id)
+	if err != nil{
+		return *city, err
+	}
+	var district []models.Child
+	for districts.Next(){
+		var arr models.Child
+		if err := districts.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return *city, err
+		}
+		arr.Type = "District"
+		district = append(district, arr)
+	}
+	
+	city.Child = district
+	if err = districts.Err(); err != nil {
+		return *city, err
+	}
+
+	return *city, nil
+}
+
+func (r postgresRepository) GetDistrictByID(ctx context.Context, id string) (models.LocationReturn, error){
+	district := new(models.LocationReturn)
+	district.Type = "District"
+
+	err := r.db.QueryRow("SELECT id, city_id, name, code FROM districts WHERE id=$1", id).Scan(&district.ID, &district.ParentID, &district.Name, &district.Code)
+	if err != nil {
+		return *district, err
+	}
+
+	subdistricts, err := r.db.Query("SELECT id, district_id, name, code, FROM district WHERE district_id=$1", id)
+	if err != nil {
+		return *district, err
+	}
+	var subdistrict []models.Child
+	for subdistricts.Next(){
+		var arr models.Child
+		if err := subdistricts.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return *district, err
+		}
+		arr.Type = "Sub-District"
+		subdistrict = append(subdistrict, arr)
+	}
+
+	district.Child = subdistrict
+	if err = subdistricts.Err(); err != nil {
+		return *district, err
+	}
+	return *district, nil
+}
+
+func (r postgresRepository) GetSubdistrictByID(ctx context.Context, id string) (models.LocationReturn, error){
+	subdistrict := new(models.LocationReturn)
+	subdistrict.Type = "Sub-District"
+	err:= r.db.QueryRow("SELECT id, district_id, name, code FROM subdistricts WHERE id=$1", id).Scan(&subdistrict.ID, &subdistrict.Name, &subdistrict.Code, &subdistrict.ParentID)
+	if err != nil{
+		return *subdistrict, err
+	}
+	return *subdistrict, nil
+}
+
+func (r postgresRepository) GetAllCountry(ctx context.Context) ([]models.LocationReturn, error){
+	var country []models.LocationReturn
 
 	result, err:= r.db.Query("SELECT id, name, code FROM country") 
 	if err != nil {
@@ -112,7 +217,7 @@ func (r postgresRepository) GetAllCountry(ctx context.Context) ([]models.Country
 	}
 
 	for result.Next(){
-		var arr models.Country
+		var arr models.LocationReturn
 		if err := result.Scan(&arr.ID, &arr.Name, &arr.Code); err != nil {
 			return country, err
 		}
@@ -126,98 +231,92 @@ func (r postgresRepository) GetAllCountry(ctx context.Context) ([]models.Country
 	return country, nil
 }
 
-func (r postgresRepository) GetProvince(ctx context.Context, id string) (models.ProvinceReturn, error){
-	province:= new(models.ProvinceReturn)
+func(r postgresRepository) GetAllProvince(ctx context.Context) ([]models.LocationReturn, error){
+	var province []models.LocationReturn
 
-	err := r.db.QueryRow("SELECT id, name, code, country_id FROM provinces WHERE id=$1", id).Scan(&province.ID, &province.CountryID, &province.Name, &province.Code)
-	if err != nil{
-		return *province, err
+	result, err := r.db.Query("SELECT id, country_id, name, code FROM provinces")
+	if err != nil {
+		return province, err
 	}
-	cities, err := r.db.Query("SELECT id, name, code, province_id FROM city WHERE province_id=$1", id)
-	if err != nil{
-		return *province, err
-	}
-	var city []models.City
-	for cities.Next(){
-		var arr models.City
-		if err := cities.Scan(&arr.ID, &arr.ProvinceID, &arr.Name, &arr.Code); err != nil {
-			return *province, err
+
+	for result.Next(){
+		var arr models.LocationReturn
+		if err := result.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return province, err
 		}
+		arr.Type = "Province"
+		province = append(province, arr)
+	}
+	if result.Err() != nil {
+		return province, err
+	}
+	return province, nil
+}
+
+func(r postgresRepository) GetAllCity(ctx context.Context) ([]models.LocationReturn, error){
+	var city []models.LocationReturn
+
+	result, err := r.db.Query("SELECT id, province_id, name, code FROM city")
+	if err != nil {
+		return city, err
+	}
+
+	for result.Next(){
+		var arr models.LocationReturn
+		if err := result.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return city, err
+		}
+		arr.Type = "City"
 		city = append(city, arr)
 	}
-	
-	province.City = city
-	if err = cities.Err(); err != nil {
-		return *province, err
+	if result.Err() != nil {
+		return city, err
 	}
-
-	return *province, nil
+	return city, nil
 }
 
-func (r postgresRepository) GetCity(ctx context.Context, id string) (models.CityReturn, error){
-	city:= new(models.CityReturn)
+func(r postgresRepository) GetAllDistrict(ctx context.Context) ([]models.LocationReturn, error){
+	var district []models.LocationReturn
 
-	err := r.db.QueryRow("SELECT id, name, code, province_id FROM city WHERE id=$1", id).Scan(&city.ID, &city.ProvinceID, &city.Name, &city.Code)
-	if err != nil{
-		return *city, err
+	result, err := r.db.Query("SELECT id, city_id, name, code FROM districts")
+	if err != nil {
+		return district, err
 	}
-	districts, err := r.db.Query("SELECT id, name, code, city_id FROM district WHERE city_id=$1", id)
-	if err != nil{
-		return *city, err
-	}
-	var district []models.District
-	for districts.Next(){
-		var arr models.District
-		if err := districts.Scan(&arr.ID, &arr.CityID, &arr.Name, &arr.Code); err != nil {
-			return *city, err
+
+	for result.Next(){
+		var arr models.LocationReturn
+		if err := result.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return district, err
 		}
+		arr.Type = "District"
 		district = append(district, arr)
 	}
-	
-	city.District = district
-	if err = districts.Err(); err != nil {
-		return *city, err
+	if result.Err() != nil {
+		return district, err
 	}
-
-	return *city, nil
+	return district, nil
 }
 
-func (r postgresRepository) GetDistrict(ctx context.Context, id string) (models.DistrictReturn, error){
-	district := new(models.DistrictReturn)
+func(r postgresRepository) GetAllSubdistrict(ctx context.Context) ([]models.LocationReturn, error){
+	var subdistrict []models.LocationReturn
 
-	err := r.db.QueryRow("SELECT id, name, code, city_id FROM districts WHERE id=$1", id).Scan(&district.ID, &district.CityID, &district.Name, &district.Code)
+	result, err := r.db.Query("SELECT id, district_id, name, code FROM subdistricts")
 	if err != nil {
-		return *district, err
+		return subdistrict, err
 	}
 
-	subdistricts, err := r.db.Query("SELECT id, name, code, district_id FROM district WHERE district_id=$1", id)
-	if err != nil {
-		return *district, err
-	}
-	var subdistrict []models.Subdistrict
-	for subdistricts.Next(){
-		var arr models.Subdistrict
-		if err := subdistricts.Scan(&arr.ID, &arr.DistrictID, &arr.Name, &arr.Code); err != nil {
-			return *district, err
+	for result.Next(){
+		var arr models.LocationReturn
+		if err := result.Scan(&arr.ID, &arr.ParentID, &arr.Name, &arr.Code); err != nil {
+			return subdistrict, err
 		}
+		arr.Type = "Subdistrict"
 		subdistrict = append(subdistrict, arr)
 	}
-
-	district.Subdistrict = subdistrict
-	if err = subdistricts.Err(); err != nil {
-		return *district, err
+	if result.Err() != nil {
+		return subdistrict, err
 	}
-	return *district, nil
-}
-
-func (r postgresRepository) GetSubdistrict(ctx context.Context, id string) (models.Subdistrict, error){
-	subdistrict := new(models.Subdistrict)
-
-	err:= r.db.QueryRow("SELECT id, name, code, district_id FROM subdistricts WHERE id=$1", id).Scan(&subdistrict.ID)
-	if err != nil{
-		return *subdistrict, err
-	}
-	return *subdistrict, nil
+	return subdistrict, nil
 }
 
 func (r postgresRepository) UpdateLocation(ctx context.Context, input models.LocationInput) (sql.Result, error) {

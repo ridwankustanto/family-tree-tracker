@@ -55,13 +55,14 @@ func CreateLocation(c *fiber.Ctx, srv locationService.Service) error {
 
 }
 
-func GetCountry(c *fiber.Ctx, srv locationService.Service) error {
+func GetLocationByID(c * fiber.Ctx, srv locationService.Service)error{
 	ctx := context.Background()
 	id := c.Params("id")
+	request_type := c.Params("type")
 
-	result, err := srv.GetCountry(ctx, id)
+	result, err := srv.GetLocationByID(ctx, id, request_type)
 	if err != nil {
-		log.Println("srv.GetCountry()", err)
+		log.Println("srv.GetLocationByID()", err)
 		return c.Status(http.StatusBadGateway).JSON(clients.Response{
 			Error:        true,
 			DebugMessage: err.Error(),
@@ -72,17 +73,17 @@ func GetCountry(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("Data related to country found!"),
+		Message: fmt.Sprintf("Showing %v with ID: %v", strings.Title(string(result.Type)), result.ID),
 		Data:    *&result,
 	})
 }
 
-func GetAllCountry(c *fiber.Ctx, srv locationService.Service) error {
+func GetAllLocation(c *fiber.Ctx, srv locationService.Service) error {
 	ctx := context.Background()
-
-	result, err := srv.GetAllCountry(ctx)
+	request_type := c.Params("type")
+	result, err := srv.GetAllLocation(ctx, request_type)
 	if err != nil {
-		log.Println("srv.GetAllCountry()", err)
+		log.Println("srv.GetAllLocation()", err)
 		return c.Status(http.StatusBadGateway).JSON(clients.Response{
 			Error:        true,
 			DebugMessage: err.Error(),
@@ -93,98 +94,31 @@ func GetAllCountry(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("Showing All Country"),
+		Message: fmt.Sprintf("Showing %v", strings.Title(string(request_type))),
 		Data:    *&result,
 	})
 }
 
-func GetProvince(c *fiber.Ctx, srv locationService.Service) error {
-	ctx := context.Background()
-	id := c.Params("id")
+// func GetAllCountry(c *fiber.Ctx, srv locationService.Service) error {
+// 	ctx := context.Background()
 
-	result, err := srv.GetProvince(ctx, id)
-	if err != nil {
-		log.Println("srv.GetProvince()", err)
-		return c.Status(http.StatusBadGateway).JSON(clients.Response{
-			Error:        true,
-			DebugMessage: err.Error(),
-			Message:      clients.ErrBadGateway,
-		})
-	}
+// 	result, err := srv.GetAllCountry(ctx)
+// 	if err != nil {
+// 		log.Println("srv.GetAllCountry()", err)
+// 		return c.Status(http.StatusBadGateway).JSON(clients.Response{
+// 			Error:        true,
+// 			DebugMessage: err.Error(),
+// 			Message:      clients.ErrBadGateway,
+// 		})
+// 	}
 
-	return c.Status(http.StatusOK).JSON(clients.Response{
-		Error: false,
-		// Message: message,
-		Message: fmt.Sprintf("Data related to this particular province found!"),
-		Data:    *&result,
-	})
-}
-
-func GetCity(c *fiber.Ctx, srv locationService.Service) error {
-	ctx := context.Background()
-	id := c.Params("id")
-
-	result, err := srv.GetCity(ctx, id)
-	if err != nil {
-		log.Println("srv.GetCity()", err)
-		return c.Status(http.StatusBadGateway).JSON(clients.Response{
-			Error:        true,
-			DebugMessage: err.Error(),
-			Message:      clients.ErrBadGateway,
-		})
-	}
-
-	return c.Status(http.StatusOK).JSON(clients.Response{
-		Error: false,
-		// Message: message,
-		Message: fmt.Sprintf("Data related to this particular city found!"),
-		Data:    *&result,
-	})
-}
-
-func GetDistrict(c *fiber.Ctx, srv locationService.Service) error {
-	ctx := context.Background()
-	id := c.Params("id")
-
-	result, err := srv.GetProvince(ctx, id)
-	if err != nil {
-		log.Println("srv.GetProvince()", err)
-		return c.Status(http.StatusBadGateway).JSON(clients.Response{
-			Error:        true,
-			DebugMessage: err.Error(),
-			Message:      clients.ErrBadGateway,
-		})
-	}
-
-	return c.Status(http.StatusOK).JSON(clients.Response{
-		Error: false,
-		// Message: message,
-		Message: fmt.Sprintf("Data related to this particular district found!"),
-		Data:    *&result,
-	})
-}
-
-func GetSubdistrict(c *fiber.Ctx, srv locationService.Service) error {
-	ctx := context.Background()
-	id := c.Params("id")
-
-	result, err := srv.GetProvince(ctx, id)
-	if err != nil {
-		log.Println("srv.GetProvince()", err)
-		return c.Status(http.StatusBadGateway).JSON(clients.Response{
-			Error:        true,
-			DebugMessage: err.Error(),
-			Message:      clients.ErrBadGateway,
-		})
-	}
-
-	return c.Status(http.StatusOK).JSON(clients.Response{
-		Error: false,
-		// Message: message,
-		Message: fmt.Sprintf("Subdistrict found!"),
-		Data:    *&result,
-	})
-}
+// 	return c.Status(http.StatusOK).JSON(clients.Response{
+// 		Error: false,
+// 		// Message: message,
+// 		Message: fmt.Sprintf("Showing All Country"),
+// 		Data:    *&result,
+// 	})
+// }
 
 func UpdateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	role := middlewares.Authorize(c); 
@@ -259,7 +193,7 @@ func DeleteLocation(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.Type[0])), string(location.Type[1:])),
+		Message: fmt.Sprintf("%v%v Deleted!", strings.ToUpper(string(location.Type[0])), string(location.Type[1:])),
 		Data:    *location,
 	})
 }

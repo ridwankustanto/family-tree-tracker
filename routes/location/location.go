@@ -2,7 +2,6 @@ package location
 
 import (
 	"database/sql"
-	// "log"
 
 	"github.com/gofiber/fiber/v2"
 	locationClient "github.com/ridwankustanto/family-tree-tracker/clients/location"
@@ -22,31 +21,15 @@ func Routes(api fiber.Router, db *sql.DB) {
 		return locationClient.CreateLocation(c, srv)
 	})
 
-	location.Get("/country", func(c *fiber.Ctx) error {
-		return locationClient.GetAllCountry(c, srv)
+	location.Get("/:type/:id", func(c *fiber.Ctx) error {
+		return locationClient.GetLocationByID(c, srv)
 	})
 
-	location.Get("/country/:id", func(c *fiber.Ctx) error {
-		return locationClient.GetCountry(c, srv)
-	})
-	
-	location.Get("/province/:id", func(c *fiber.Ctx) error {
-		return locationClient.GetProvince(c, srv)
-	})
-	
-	location.Get("/city/:id", func(c *fiber.Ctx) error {
-		return locationClient.GetCity(c, srv)
+	location.Get("/:type", func(c *fiber.Ctx) error {
+		return locationClient.GetAllLocation(c, srv)
 	})
 
-	location.Get("/district/:id", func(c *fiber.Ctx) error {
-		return locationClient.GetDistrict(c, srv)
-	})
-
-	location.Get("/subdistrict/:id", func(c *fiber.Ctx) error {
-		return locationClient.GetSubdistrict(c, srv)
-	})
-	
-	location.Put("/:type/id", func(c *fiber.Ctx) error {
+	location.Put("/:type/:id", func(c *fiber.Ctx) error {
 		return locationClient.UpdateLocation(c, srv)
 	})
 
