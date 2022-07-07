@@ -43,7 +43,7 @@ func (r *postgresRepository) Ping() error {
 func (r postgresRepository) CreateLocation(ctx context.Context, a models.LocationInput) (string, error){
 	// kalo pake switch case
 	log.Println(a)
-	switch a.RequestType {
+	switch a.Type {
 	case "country":
 		result, err:= r.db.ExecContext(ctx, "INSERT INTO country(id, name, code, created_at, updated_at) VALUES($1, $2, $3, $4, $5)", 
 		a.ID, a.Name, a.Code, a.CreatedAt, a.UpdatedAt)
@@ -221,7 +221,7 @@ func (r postgresRepository) GetSubdistrict(ctx context.Context, id string) (mode
 }
 
 func (r postgresRepository) UpdateLocation(ctx context.Context, input models.LocationInput) (sql.Result, error) {
-	switch input.RequestType {
+	switch input.Type {
 	case "country":
 		result, err := r.db.ExecContext(ctx, "UPDATE country SET name=$2, code=$3, updated_at=$4 WHERE id=$1", input.ID, input.Name, input.Code, input.UpdatedAt)
 		log.Println(result)
@@ -249,7 +249,7 @@ func (r postgresRepository) UpdateLocation(ctx context.Context, input models.Loc
 }
 
 func (r postgresRepository) DeleteLocation(ctx context.Context, input models.LocationInput)(sql.Result, error){
-	switch input.RequestType{
+	switch input.Type{
 	case "country":
 		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
 		log.Println(result)

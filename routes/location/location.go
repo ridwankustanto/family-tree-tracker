@@ -18,7 +18,7 @@ func Routes(api fiber.Router, db *sql.DB) {
 
 	location := api.Group("location")
 	location.Use(middlewares.Restrict())
-	location.Post("/add", func(c *fiber.Ctx) error {
+	location.Post("/:type", func(c *fiber.Ctx) error {
 		return locationClient.CreateLocation(c, srv)
 	})
 
@@ -46,11 +46,11 @@ func Routes(api fiber.Router, db *sql.DB) {
 		return locationClient.GetSubdistrict(c, srv)
 	})
 	
-	location.Post("/edit/:id", func(c *fiber.Ctx) error {
+	location.Put("/:type/id", func(c *fiber.Ctx) error {
 		return locationClient.UpdateLocation(c, srv)
 	})
 
-	location.Post("/delete/:id", func(c *fiber.Ctx) error {
+	location.Delete("/:type/:id", func(c *fiber.Ctx) error {
 		return locationClient.DeleteLocation(c, srv)
 	})
 	

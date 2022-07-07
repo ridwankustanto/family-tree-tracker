@@ -31,7 +31,6 @@ func NewService(r location.Repository) Service {
 
 func (s service) CreateLocation(ctx context.Context, input models.LocationInput) (*models.LocationInput, string, error){
 	layout := "2006-01-02T15:04:05-0700"
-
 	input.ID = utils.FormatUUID(uuid.New().String())
 	input.CreatedAt = time.Now().Format(layout)
 	input.UpdatedAt = time.Now().Format(layout)

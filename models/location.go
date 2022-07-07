@@ -5,7 +5,7 @@ type LocationInput struct {
 	ParentID 	string `json:"parent_id,omitempty"`
 	Name 		string `json:"name"`
 	Code 		string `json:"code"`
-	RequestType	string `json:"type"`
+	Type	string `json:"type"`
 	CreatedAt 	string `json:"created_at,omitempty"`
 	UpdatedAt 	string `json:"updated_at"`
 }

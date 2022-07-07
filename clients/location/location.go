@@ -25,7 +25,7 @@ func CreateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	}
 	ctx := context.Background()
 	location := new(models.LocationInput)
-
+	location.Type = c.Params("type")
 	if err := c.BodyParser(location); err != nil {
 		log.Println("c.BodyParser(location)", err)
 		return c.Status(http.StatusBadGateway).JSON(clients.Response{
@@ -49,7 +49,7 @@ func CreateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("%v%v Created!", strings.ToUpper(string(location.RequestType[0])), string(location.RequestType[1:])),
+		Message: fmt.Sprintf("%v%v Created!", strings.ToUpper(string(location.Type[0])), string(location.Type[1:])),
 		Data:    *location,
 	})
 
@@ -195,6 +195,7 @@ func UpdateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	ctx := context.Background()
 	location := new(models.LocationInput)
 	location.ID = c.Params("id")
+	location.Type = c.Params("type")
 
 	if err := c.BodyParser(location); err != nil {
 		log.Println("c.BodyParser(location)", err)
@@ -219,7 +220,7 @@ func UpdateLocation(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.RequestType[0])), string(location.RequestType[1:])),
+		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.Type[0])), string(location.Type[1:])),
 		Data:    *location,
 	})
 }
@@ -233,6 +234,7 @@ func DeleteLocation(c *fiber.Ctx, srv locationService.Service) error {
 	ctx := context.Background()
 	location := new(models.LocationInput)
 	location.ID = c.Params("id")
+	location.Type = c.Params("type")
 
 	if err := c.BodyParser(location); err != nil {
 		log.Println("c.BodyParser(location)", err)
@@ -257,7 +259,7 @@ func DeleteLocation(c *fiber.Ctx, srv locationService.Service) error {
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		// Message: message,
-		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.RequestType[0])), string(location.RequestType[1:])),
+		Message: fmt.Sprintf("%v%v Updated!", strings.ToUpper(string(location.Type[0])), string(location.Type[1:])),
 		Data:    *location,
 	})
 }
