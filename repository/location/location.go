@@ -77,25 +77,6 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 	}
 }
 
-func StatementMasterByID(input string) (string, error) {
-	switch input{
-	case "country":
-		return "SELECT id, $2, name, code from country where id=$1", nil
-	case "provinces":
-		return "SELECT id, $2, name, code from provinces where id=$1", nil 
-	case "city":
-		return "SELECT id, $2, name, code from city where id=$1", nil
-	case "districts":
-		return "SELECT id, $2, name, code from districts where id=$1", nil
-	case "subdistricts":
-		return "SELECT id, $2, name, code from subdistricts where id=$1", nil
-	default:
-		return "", errors.New("invalid Location Type")
-	}
-}
-
-
-
 func (r postgresRepository) GetCountryByID(ctx context.Context, id string)(models.LocationReturn, error){
 	country := new(models.LocationReturn)
 	country.Type = "Country"
@@ -372,22 +353,22 @@ func (r postgresRepository) DeleteLocation(ctx context.Context, input models.Loc
 		return result, err
 		
 	case "provinces":
-		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		result, err := r.db.ExecContext(ctx, "DELETE FROM provinces WHERE id=$1", input.ID)
 		log.Println(result)
 		return result, err
 	
 	case "city":
-		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		result, err := r.db.ExecContext(ctx, "DELETE FROM city WHERE id=$1", input.ID)
 		log.Println(result)
 		return result, err
 	
 	case "districts":
-		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		result, err := r.db.ExecContext(ctx, "DELETE FROM districts WHERE id=$1", input.ID)
 		log.Println(result)
 		return result, err
 	
 	case "subdistricts":
-		result, err := r.db.ExecContext(ctx, "DELETE FROM country WHERE id=$1", input.ID)
+		result, err := r.db.ExecContext(ctx, "DELETE FROM subdistricts WHERE id=$1", input.ID)
 		log.Println(result)
 		return result, err 
 	default:
