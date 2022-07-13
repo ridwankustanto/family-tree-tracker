@@ -24,6 +24,16 @@ func Routes(app *fiber.App) {
 		log.Fatal(err)
 	}
 
+	// api.Get("/test/:id", func(c *fiber.Ctx) error {
+	// 	log.Println(c.Params("id"))
+	// 	return nil
+	// })
+
+	// api.Get("/tes/", func(c *fiber.Ctx) error {
+	// 	log.Println(c.Params("id"))
+	// 	return nil
+	// })
+
 	// Regis your routes
 	account.Routes(api, db)
 	location.Routes(api, db)

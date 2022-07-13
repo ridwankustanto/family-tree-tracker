@@ -6,8 +6,6 @@ import(
 	"errors"
 	"log"
 	"github.com/ridwankustanto/family-tree-tracker/models"
-
-
 )
 
 type Repository interface {
@@ -79,6 +77,25 @@ func (r postgresRepository) CreateLocation(ctx context.Context, a models.Locatio
 	}
 }
 
+func StatementMasterByID(input string) (string, error) {
+	switch input{
+	case "country":
+		return "SELECT id, $2, name, code from country where id=$1", nil
+	case "provinces":
+		return "SELECT id, $2, name, code from provinces where id=$1", nil 
+	case "city":
+		return "SELECT id, $2, name, code from city where id=$1", nil
+	case "districts":
+		return "SELECT id, $2, name, code from districts where id=$1", nil
+	case "subdistricts":
+		return "SELECT id, $2, name, code from subdistricts where id=$1", nil
+	default:
+		return "", errors.New("invalid Location Type")
+	}
+}
+
+
+
 func (r postgresRepository) GetCountryByID(ctx context.Context, id string)(models.LocationReturn, error){
 	country := new(models.LocationReturn)
 	country.Type = "Country"
@@ -112,11 +129,11 @@ func (r postgresRepository) GetCountryByID(ctx context.Context, id string)(model
 func (r postgresRepository) GetProvinceByID(ctx context.Context, id string) (models.LocationReturn, error){
 	province:= new(models.LocationReturn)
 	province.Type = "Province"
-	err := r.db.QueryRow("SELECT id, name, code, country_id FROM provinces WHERE id=$1", id).Scan(&province.ID, &province.ParentID, &province.Name, &province.Code)
+	err := r.db.QueryRow("SELECT id, country_id, name, code FROM provinces WHERE id=$1", id).Scan(&province.ID, &province.ParentID, &province.Name, &province.Code)
 	if err != nil{
 		return *province, err
 	}
-	cities, err := r.db.Query("SELECT id, name, code, province_id FROM city WHERE province_id=$1", id)
+	cities, err := r.db.Query("SELECT id, province_id, name, code FROM city WHERE province_id=$1", id)
 	if err != nil{
 		return *province, err
 	}

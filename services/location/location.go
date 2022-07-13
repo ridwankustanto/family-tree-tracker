@@ -3,6 +3,7 @@ package location
 import (
 	"context"
 	"errors"
+	_"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -40,6 +41,14 @@ func (s service) CreateLocation(ctx context.Context, input models.LocationInput)
 }
 
 func(s service) GetLocationByID(ctx context.Context, id string, request_type string) (*models.LocationReturn, error) {
+	// request_case := models.LocationMap[request_type]
+	// table_location := new(models.DynamicColumnStruct)
+	// location_struct, err := MapToStruct(request_case, *table_location)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// result, err := s.repository.GetLocationByID(ctx, *location_struct, id)
+	
 	switch request_type{
 	case "country":
 		result, err := s.repository.GetCountryByID(ctx, id)
