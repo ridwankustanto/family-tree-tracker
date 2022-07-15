@@ -7,7 +7,8 @@ import (
 	// "github.com/golang-jwt/jwt/v4"
 	"github.com/ridwankustanto/family-tree-tracker/routes/account"
 	"github.com/ridwankustanto/family-tree-tracker/routes/location"
-	// "github.com/ridwankustanto/family-tree-tracker/utils"
+	"github.com/ridwankustanto/family-tree-tracker/routes/ripemd-test"
+
 	"github.com/ridwankustanto/family-tree-tracker/utils/database"
 	"github.com/ridwankustanto/family-tree-tracker/utils/middlewares"
 )
@@ -37,5 +38,6 @@ func Routes(app *fiber.App) {
 	// Regis your routes
 	account.Routes(api, db)
 	location.Routes(api, db)
+	ripemdtest.Routes(api)
 
 }

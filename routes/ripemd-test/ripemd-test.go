@@ -7,11 +7,15 @@ import (
 )
 
 func Routes(api fiber.Router){
-	ripemd := api.Group("request-client-secret")
+	ripemd := api.Group("req")
 	srv := ripemdService.Services{}
 
-	ripemd.Get("/:client_id", func(c *fiber.Ctx) error {
+	ripemd.Get("/request-client-secret/:client_id", func(c *fiber.Ctx) error {
 		return ripemdClient.RequestClientSecret(c, srv)
+	})
+
+	ripemd.Post("/validate", func(c *fiber.Ctx) error {
+		return ripemdClient.Validate(c, srv)
 	})
 
 }
