@@ -29,10 +29,10 @@ func Routes(app *fiber.App) {
 	// 	return nil
 	// })
 
-	// api.Get("/tes/", func(c *fiber.Ctx) error {
-	// 	log.Println(c.Params("id"))
-	// 	return nil
-	// })
+	api.Get("/test/", func(c *fiber.Ctx) error {
+		log.Println(c.Get("Authorization"))
+		return nil
+	})
 
 	// Regis your routes
 	account.Routes(api, db)
