@@ -14,7 +14,7 @@ func Routes(api fiber.Router){
 		return ripemdClient.RequestClientSecret(c, srv)
 	})
 
-	ripemd.Post("/validate", func(c *fiber.Ctx) error {
+	ripemd.Post("/validate/:date", func(c *fiber.Ctx) error {
 		return ripemdClient.Validate(c, srv)
 	})
 

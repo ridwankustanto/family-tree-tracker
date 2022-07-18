@@ -14,7 +14,7 @@ import (
 
 func RequestClientSecret(c *fiber.Ctx, srv ripemdService.Service) error {
 	client_id := c.Params("client_id")
-	token := srv.Encrypt(client_id)
+	token := srv.Prepare(client_id, "").Encrypt()
 	return c.Status(http.StatusOK).JSON(clients.Response{
 		Error: false,
 		Message: fmt.Sprintf("Here's your token"),
@@ -24,6 +24,7 @@ func RequestClientSecret(c *fiber.Ctx, srv ripemdService.Service) error {
 
 func Validate(c *fiber.Ctx, srv ripemdService.Service) error {
 	Authorization := c.Get("Authorization")
+	date := c.Params("date")
 	input := new(models.ClientInput)
 	if err := c.BodyParser(input); err != nil {
 		log.Println("c.BodyParser(input)", err)
@@ -33,7 +34,7 @@ func Validate(c *fiber.Ctx, srv ripemdService.Service) error {
 			Message:      clients.ErrSomethingWentWrong,
 		})
 	}
-	token := srv.Encrypt(input.ClientID)
+	token := srv.Prepare(input.ClientID, date).Encrypt()
 	Auth := srv.Sanitize(Authorization, "Bearer ")
 	err := srv.Compare(Auth, token)
 	if err != nil {
